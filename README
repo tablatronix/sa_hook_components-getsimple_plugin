@@ -1,0 +1,5 @@
+sa hook components
+Auto executes components based on plugin hooks
+Components have to be named 'hook_' hook name
+eg. 'hook_header-body'
+
