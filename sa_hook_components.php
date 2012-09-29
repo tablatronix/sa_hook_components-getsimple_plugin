@@ -1,29 +1,22 @@
 <?php
 
 /*
-Added parse error catching regardless of error reporting level
-Fixed issue with backtracing object classes
-
-Added force on global
-*/
-
-/*
 * @Plugin Name: sa_hook_components
 * @Description: Executes components on hooks
-* @Version: 0.1
+* @Version: 0.2
 * @Author: Shawn Alverson
 * @Author URI: http://tablatronix.com/getsimple-cms/sa-hook-components/
 */
 
 
-$PLUGIN_ID = "sa_development";
+$PLUGIN_ID = "sa_hooks";
 $PLUGINPATH = $SITEURL.'plugins/sa_hook_components/';
-$sa_url = 'http://tablatronix.com/getsimple-cms/sa-dev-plugin/';
+$sa_url = 'http://tablatronix.com/getsimple-cms/sa-hook-components/';
 
 # get correct id for plugin
 $thisfile=basename(__FILE__, ".php");			// Plugin File
 $sa_pname = 		'SA Hook Components';    	//Plugin name
-$sa_pversion =	'0.1'; 		       	      	//Plugin version
+$sa_pversion =	'0.2'; 		       	      	//Plugin version
 $sa_pauthor = 	'Shawn Alverson';       	//Plugin author
 $sa_purl = 			$sa_url;									//author website
 $sa_pdesc =			'Execute components on hooks'; 	//Plugin description
@@ -37,11 +30,13 @@ require_once('sa_hook_components/hooks.php');
 
 function sa_hc_init(){
 	global $components,$FRONT_END_HOOKS,$BACK_END_HOOKS;
+	
+	// if components are not loaded in gobals, we load them ourselves
 	if (!$components) {
 		$components = sa_hc_get_component();
 	}
 
-	// loop components for hook names
+	// loop components for titles of "hook_" then register them
 	$compnames = $components->xpath('item/title');
 
 	foreach($compnames as $compname){
@@ -50,20 +45,15 @@ function sa_hc_init(){
 		if(strpos($compname,'hook_') === false) continue;		
 		$compname = substr($compname,5);
 		
-		if(isset($FRONT_END_HOOKS[$compname])){
-			# _debugLog((string)$compname,$FRONT_END_HOOKS[(string)$compname]);
-      add_action($compname,'get_component',array('hook_'.$compname));	
-		}	
-		else if(isset($BACK_END_HOOKS[(string)$compname])){
-			// theme_functions is not loaded on backend		
-			# _debugLog((string)$compname,$BACK_END_HOOKS[(string)$compname]);
-      add_action($compname,'sa_hc_exec_component',array('hook_'.$compname));	
-		}			
+      	add_action($compname,'sa_hc_exec_component',array('hook_'.$compname));	
 	}
 	
 }	
 
 function sa_hc_get_component($id = null){
+
+	// loads components, returns all if no $id is specified
+
 	$file 		= "components.xml";
 	$path 		= GSDATAOTHERPATH;
 	$data = getXML($path . $file);
@@ -80,7 +70,7 @@ function sa_hc_get_component($id = null){
 }
 
 function sa_hc_exec_component($id){
-	_debugLog('exec_component '.$id);
+	debugLog('sa_hook_components: executing component '.$id);
 	$component = sa_hc_get_component($id);
 	# _debugLog($component);
 	eval("?>" . strip_decode($component[0]->value) . "<?php "); 
