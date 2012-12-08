@@ -3,7 +3,7 @@
 /*
 * @Plugin Name: sa_hook_components
 * @Description: Executes components on hooks
-* @Version: 0.2
+* @Version: 0.2.1
 * @Author: Shawn Alverson
 * @Author URI: http://tablatronix.com/getsimple-cms/sa-hook-components/
 */
@@ -16,7 +16,7 @@ $sa_url = 'http://tablatronix.com/getsimple-cms/sa-hook-components/';
 # get correct id for plugin
 $thisfile=basename(__FILE__, ".php");			// Plugin File
 $sa_pname = 		'SA Hook Components';    	//Plugin name
-$sa_pversion =	'0.2'; 		       	      	//Plugin version
+$sa_pversion =	'0.2.1'; 		       	      	//Plugin version
 $sa_pauthor = 	'Shawn Alverson';       	//Plugin author
 $sa_purl = 			$sa_url;									//author website
 $sa_pdesc =			'Execute components on hooks'; 	//Plugin description
@@ -26,10 +26,8 @@ $sa_pfunc =			'';                       //main function (administration)
 # register plugin
 register_plugin($thisfile,$sa_pname,$sa_pversion,$sa_pauthor,$sa_url,$sa_pdesc,$sa_ptype,$sa_pfunc);
 
-require_once('sa_hook_components/hooks.php');
-
 function sa_hc_init(){
-	global $components,$FRONT_END_HOOKS,$BACK_END_HOOKS;
+	global $components;
 	
 	// if components are not loaded in gobals, we load them ourselves
 	if (!$components) {
